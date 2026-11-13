@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Barbería Norte — Demo reservas</title>
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; background: #14171c; color: #eef0f3; min-height: 100vh; padding: 24px 16px 60px; }
+  button, input { font: inherit; }
+  .app { width: min(560px, 100%); margin: 0 auto; }
+  .head { text-align: center; margin-bottom: 20px; border-radius: 18px; padding: 110px 20px 22px; background: linear-gradient(rgba(20,23,28,.15), rgba(20,23,28,.95)), url(img/barberia.jpg) center 62%/cover; }
+  .head div { font-size: 2rem; }
+  .head h1 { font-size: 1.6rem; margin-top: 4px; }
+  .head p { color: #d5dae2; }
+  .step { background: #1d2128; border: 1px solid #2b313b; border-radius: 18px; padding: 22px; margin-bottom: 14px; }
+  .step h2 { font-size: 1rem; margin-bottom: 14px; display: flex; gap: 10px; align-items: center; }
+  .step h2 i { font-style: normal; background: #f2c14e; color: #14171c; width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font-size: .8rem; font-weight: 700; }
+  .opts { display: grid; gap: 8px; }
+  .days { grid-template-columns: repeat(auto-fill, minmax(72px, 1fr)); }
+  .times { grid-template-columns: repeat(auto-fill, minmax(78px, 1fr)); }
+  .o { background: #14171c; border: 1px solid #2b313b; color: inherit; border-radius: 12px; padding: 12px; cursor: pointer; text-align: left; display: flex; justify-content: space-between; gap: 10px; }
+  .days .o, .times .o { flex-direction: column; align-items: center; text-align: center; gap: 0; }
+  .o small { color: #9aa3af; }
+  .o:hover:not(:disabled) { border-color: #f2c14e; }
+  .o.on { background: #f2c14e; border-color: #f2c14e; color: #14171c; }
+  .o.on small { color: #4a3a10; }
+  .o:disabled { opacity: .3; cursor: not-allowed; text-decoration: line-through; }
+  input { width: 100%; padding: 13px 14px; border-radius: 12px; border: 1px solid #2b313b; background: #14171c; color: #fff; }
+  .go { width: 100%; padding: 16px; border: 0; border-radius: 14px; background: #f2c14e; color: #14171c; font-weight: 700; font-size: 1.05rem; cursor: pointer; }
+  .go:disabled { opacity: .35; cursor: not-allowed; }
+  .ok { text-align: center; }
+  .ok .big { font-size: 3.4rem; }
+  .ok h2 { justify-content: center; font-size: 1.4rem; margin: 6px 0 16px; }
+  .ticket { background: #14171c; border: 1px dashed #4a5361; border-radius: 14px; padding: 18px; text-align: left; line-height: 1.9; }
+  .ticket span { color: #9aa3af; display: inline-block; width: 90px; }
+  .ok p { color: #9aa3af; font-size: .9rem; margin: 16px 0; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="head">
+    <div>💈</div>
+    <h1>Barbería Norte</h1>
+    <p>Reserva tu turno en menos de un minuto</p>
+  </div>
+
+  <div id="form">
+    <div class="step"><h2><i>1</i>¿Qué te hacemos?</h2><div class="opts" id="services"></div></div>
+    <div class="step"><h2><i>2</i>Elige el día</h2><div class="opts days" id="days"></div></div>
+    <div class="step"><h2><i>3</i>Elige la hora</h2><div class="opts times" id="times"></div></div>
+    <div class="step"><h2><i>4</i>Tu nombre</h2><input id="name" placeholder="Ej: Carlos Pérez" autocomplete="off"></div>
+    <button class="go" id="go" disabled>Confirmar reserva</button>
+  </div>
+
+  <div class="step ok" id="ok" hidden>
+    <div class="big">✅</div>
+    <h2>¡Turno confirmado!</h2>
+    <div class="ticket" id="ticket"></div>
+    <p>En tu sistema real, el cliente recibe un recordatorio y tú ves el turno en tu agenda al instante.</p>
+    <button class="go" id="again">Hacer otra reserva</button>
+  </div>
+</div>
+
+<script>
+  const $ = (id) => document.getElementById(id);
+  const sel = { service: null, day: null, time: null };
+  const services = [
+    { n: "Corte de pelo", t: "30 min", p: "$12" },
+    { n: "Corte + barba", t: "45 min", p: "$18" },
+    { n: "Arreglo de barba", t: "20 min", p: "$8" },
+  ];
+  const times = ["10:00", "10:30", "11:00", "11:30", "12:00", "15:00", "15:30", "16:00", "16:30", "17:00", "17:30", "18:00"];
+
+  const days = [];
+  for (let i = 1; days.length < 6; i++) {
+    const d = new Date(); d.setDate(d.getDate() + i);
+    if (d.getDay() === 0) continue; // domingo cerrado
+    days.push({
+      label: d.toLocaleDateString("es", { weekday: "short" }).replace(".", ""),
+      num: d.getDate(),
+      full: d.toLocaleDateString("es", { weekday: "long", day: "numeric", month: "long" }),
+      seed: d.getDate(),
+    });
+  }
+
+  function draw() {
+    $("services").innerHTML = services.map((s, i) =>
+      `<button class="o ${sel.service === i ? "on" : ""}" data-k="service" data-v="${i}"><span>${s.n}<br><small>${s.t}</small></span><b>${s.p}</b></button>`).join("");
+    $("days").innerHTML = days.map((d, i) =>
+      `<button class="o ${sel.day === i ? "on" : ""}" data-k="day" data-v="${i}"><small>${d.label}</small><b>${d.num}</b></button>`).join("");
+    $("times").innerHTML = sel.day === null
+      ? '<small style="color:#9aa3af;grid-column:1/-1">Primero elige un día</small>'
+      : times.map((t, i) => {
+          const taken = (i * 7 + days[sel.day].seed) % 4 === 0;
+          return `<button class="o ${sel.time === t ? "on" : ""}" data-k="time" data-v="${t}" ${taken ? "disabled" : ""}>${t}</button>`;
+        }).join("");
+    $("go").disabled = !(sel.service !== null && sel.day !== null && sel.time && $("name").value.trim());
+  }
+
+  document.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-k]");
+    if (!b) return;
+    const k = b.dataset.k;
+    sel[k] = k === "time" ? b.dataset.v : +b.dataset.v;
+    if (k === "day") sel.time = null;
+    draw();
+  });
+  $("name").oninput = draw;
+
+  $("go").onclick = () => {
+    const s = services[sel.service];
+    const line = (a, b) => `<div><span>${a}</span><b></b></div>`;
+    $("ticket").innerHTML = line("Cliente") + line("Servicio") + line("Día") + line("Hora");
+    const vals = [$("name").value.trim(), `${s.n} (${s.p})`, days[sel.day].full, sel.time];
+    $("ticket").querySelectorAll("b").forEach((b, i) => (b.textContent = vals[i]));
+    $("form").hidden = true; $("ok").hidden = false;
+    window.scrollTo(0, 0);
+  };
+  $("again").onclick = () => {
+    sel.service = sel.day = sel.time = null; $("name").value = "";
+    $("form").hidden = false; $("ok").hidden = true; draw();
+  };
+
+  draw();
+</script>
+</body>
+</html>

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Verde Vivo — Demo tienda</title>
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; color: #15291c; background: #f4f7f1; }
+  button { font: inherit; cursor: pointer; }
+  header { position: sticky; top: 0; z-index: 5; background: #fff; border-bottom: 1px solid #dfe7da; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; }
+  header b { font-size: 1.15rem; }
+  .cartbtn { background: #15291c; color: #fff; border: 0; border-radius: 999px; padding: 10px 18px; font-weight: 600; }
+  .cartbtn span { background: #9be37a; color: #15291c; border-radius: 999px; padding: 1px 8px; margin-left: 6px; font-size: .85rem; }
+  .banner { margin: 20px; padding: 28px; border-radius: 20px; background: linear-gradient(120deg, #1f5a35, #58a05c); color: #fff; }
+  .banner h1 { font-size: clamp(1.5rem, 5vw, 2.3rem); }
+  .banner p { opacity: .9; margin-top: 6px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 16px; padding: 0 20px 40px; }
+  .p { background: #fff; border-radius: 16px; overflow: hidden; border: 1px solid #dfe7da; display: flex; flex-direction: column; }
+  .p .img { aspect-ratio: 1; width: 100%; object-fit: cover; display: block; background: #e4f3dc; }
+  .p .b { padding: 14px; display: flex; flex-direction: column; gap: 4px; flex: 1; }
+  .p small { color: #6c7d70; }
+  .p .row { display: flex; justify-content: space-between; align-items: center; margin-top: auto; padding-top: 10px; }
+  .add { background: #e4f3dc; color: #1f5a35; border: 0; border-radius: 999px; padding: 8px 14px; font-weight: 700; font-size: .88rem; }
+  .add:hover { background: #1f5a35; color: #fff; }
+  .shade { position: fixed; inset: 0; background: rgba(0,0,0,.4); opacity: 0; pointer-events: none; transition: opacity .25s; z-index: 9; }
+  .drawer { position: fixed; top: 0; right: 0; bottom: 0; width: min(380px, 100%); background: #fff; z-index: 10; transform: translateX(100%); transition: transform .25s; display: flex; flex-direction: column; }
+  .open .shade { opacity: 1; pointer-events: auto; }
+  .open .drawer { transform: none; }
+  .drawer h2 { padding: 18px 20px; border-bottom: 1px solid #dfe7da; display: flex; justify-content: space-between; font-size: 1.15rem; }
+  .drawer h2 button { border: 0; background: none; font-size: 1.1rem; }
+  .items { flex: 1; overflow: auto; padding: 8px 20px; }
+  .line { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid #eef2eb; }
+  .line .e { width: 48px; height: 48px; border-radius: 10px; object-fit: cover; }
+  .line .n { flex: 1; font-size: .92rem; }
+  .line .n small { display: block; color: #6c7d70; }
+  .qty { display: flex; align-items: center; gap: 8px; }
+  .qty button { width: 28px; height: 28px; border-radius: 50%; border: 1px solid #cfd9c9; background: #fff; }
+  .empty { text-align: center; color: #6c7d70; padding: 50px 0; }
+  .foot { padding: 18px 20px; border-top: 1px solid #dfe7da; }
+  .total { display: flex; justify-content: space-between; font-weight: 700; font-size: 1.15rem; margin-bottom: 12px; }
+  .pay { width: 100%; background: #1f5a35; color: #fff; border: 0; border-radius: 12px; padding: 14px; font-weight: 700; }
+  .pay:disabled { opacity: .4; cursor: default; }
+  .done { text-align: center; padding: 40px 10px; }
+  .done div { font-size: 3rem; }
+</style>
+</head>
+<body>
+<header>
+  <b>🌿 Verde Vivo</b>
+  <button class="cartbtn" id="open">Carrito <span id="count">0</span></button>
+</header>
+
+<div class="banner">
+  <h1>Plantas que alegran tu casa</h1>
+  <p>Envío gratis en compras desde $50. Agrega productos al carrito para probar la tienda.</p>
+</div>
+
+<div class="grid" id="grid"></div>
+
+<div class="shade" id="shade"></div>
+<aside class="drawer" aria-label="Carrito">
+  <h2>Tu carrito <button id="close" aria-label="Cerrar">✕</button></h2>
+  <div class="items" id="items"></div>
+  <div class="foot">
+    <div class="total"><span>Total</span><span id="total">$0</span></div>
+    <button class="pay" id="pay">Pagar ahora</button>
+  </div>
+</aside>
+
+<script>
+  const products = [
+    { id: 1, n: "Monstera en maceta", d: "Interior · Decorativa", p: 28, e: "monstera" },
+    { id: 2, n: "Cactus mini", d: "Poco riego", p: 9, e: "cactus" },
+    { id: 3, n: "Girasoles", d: "Ramo de 3", p: 12, e: "girasol" },
+    { id: 4, n: "Tulipanes", d: "Ramo surtido", p: 18, e: "tulipanes" },
+    { id: 5, n: "Romero", d: "Aromática · Maceta", p: 10, e: "romero" },
+    { id: 6, n: "Albahaca", d: "Aromática · Maceta", p: 8, e: "albahaca" },
+  ];
+  const cart = {};
+  const $ = (id) => document.getElementById(id);
+
+  $("grid").innerHTML = products.map((p) => `
+    <div class="p">
+      <img class="img" src="img/${p.e}.jpg" alt="${p.n}" loading="lazy">
+      <div class="b">
+        <strong>${p.n}</strong><small>${p.d}</small>
+        <div class="row"><b>$${p.p}</b><button class="add" data-add="${p.id}">+ Agregar</button></div>
+      </div>
+    </div>`).join("");
+
+  function render() {
+    const lines = products.filter((p) => cart[p.id]);
+    const total = lines.reduce((s, p) => s + p.p * cart[p.id], 0);
+    $("count").textContent = lines.reduce((s, p) => s + cart[p.id], 0);
+    $("total").textContent = "$" + total;
+    $("pay").disabled = !lines.length;
+    $("items").innerHTML = lines.length ? lines.map((p) => `
+      <div class="line">
+        <img class="e" src="img/${p.e}.jpg" alt="">
+        <span class="n">${p.n}<small>$${p.p} c/u</small></span>
+        <span class="qty"><button data-q="-1" data-id="${p.id}">−</button>${cart[p.id]}<button data-q="1" data-id="${p.id}">+</button></span>
+      </div>`).join("") : '<p class="empty">Tu carrito está vacío.<br>Agrega alguna planta 🌿</p>';
+  }
+
+  const toggle = (on) => document.body.classList.toggle("open", on);
+  $("open").onclick = () => toggle(true);
+  $("close").onclick = $("shade").onclick = () => toggle(false);
+
+  document.addEventListener("click", (e) => {
+    const add = e.target.dataset.add, q = e.target.dataset.q;
+    if (add) { cart[add] = (cart[add] || 0) + 1; render(); toggle(true); }
+    if (q) { const id = e.target.dataset.id; cart[id] += +q; if (cart[id] <= 0) delete cart[id]; render(); }
+  });
+
+  $("pay").onclick = () => {
+    Object.keys(cart).forEach((k) => delete cart[k]);
+    render();
+    $("items").innerHTML = '<div class="done"><div>✅</div><h3>¡Pedido recibido!</h3><p style="color:#6c7d70;margin-top:8px">En tu tienda real, aquí el cliente paga con tarjeta o transferencia y a ti te llega el aviso del pedido.</p></div>';
+  };
+
+  render();
+</script>
+</body>
+</html>

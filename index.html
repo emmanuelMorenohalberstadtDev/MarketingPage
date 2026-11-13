@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Páginas web, tiendas online y sistemas a medida para tu negocio</title>
+  <meta name="description" content="Desarrollo páginas web, tiendas online, sistemas de reservas y sistemas a medida. Precios claros, demos para probar y explicado sin tecnicismos.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <header class="nav">
+    <div class="wrap nav__in">
+      <a href="#inicio" class="logo"><span class="logo__dot"></span><span data-nombre-corto></span></a>
+      <nav class="nav__links" aria-label="Principal">
+        <a href="#servicios">Servicios y precios</a>
+        <a href="#proceso">Cómo trabajo</a>
+        <a href="#sobre-mi">Sobre mí</a>
+        <a href="#preguntas">Preguntas</a>
+        <a data-portafolio>Portafolio ↗</a>
+      </nav>
+      <a class="btn btn--dark btn--sm" data-contacto="Hola, vi tu página y quiero hacerte una consulta.">Hablemos</a>
+    </div>
+  </header>
+
+  <main id="inicio">
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="wrap hero__grid">
+        <div>
+          <p class="tag">Desarrollo web explicado en simple</p>
+          <h1>Tu negocio en internet, <em>sin complicarte.</em></h1>
+          <p class="lead">Hago páginas web, tiendas online y sistemas para negocios. Tú me cuentas qué necesitas con tus palabras y yo me encargo de toda la parte técnica.</p>
+          <div class="hero__cta">
+            <a href="#servicios" class="btn btn--accent">Ver servicios y precios</a>
+            <a class="btn btn--ghost" data-contacto="Hola, quiero contarte mi idea y saber cuánto costaría.">Contarte mi idea</a>
+          </div>
+          <ul class="trust">
+            <li>Abono mensual fijo y claro</li>
+            <li>Puedes probar una demo</li>
+            <li>Acompañamiento después de la entrega</li>
+          </ul>
+        </div>
+
+        <aside class="picker" aria-label="Elige qué necesitas">
+          <p class="picker__title">¿Qué quieres lograr?</p>
+          <p class="picker__sub">Elige una opción y te muestro la solución, su precio y un ejemplo.</p>
+          <div id="picker-list" class="picker__list"></div>
+          <a class="picker__other" data-contacto="Hola, no estoy seguro de qué necesito. ¿Me ayudas a definirlo?">No estoy seguro, ayúdame a elegir →</a>
+        </aside>
+      </div>
+    </section>
+
+    <!-- SERVICIOS -->
+    <section class="section" id="servicios">
+      <div class="wrap">
+        <div class="section__head">
+          <p class="tag">Servicios y precios</p>
+          <h2>Elige según lo que necesita tu negocio</h2>
+          <p>Cada opción tiene un ejemplo que puedes abrir y usar, para que veas cómo quedaría algo parecido a lo tuyo.</p>
+        </div>
+        <div id="services" class="services"></div>
+
+        <div class="note">
+          <div>
+            <h3>¿Tu idea no encaja en ninguna opción?</h3>
+            <p>No hay problema. Cuéntamela como se la contarías a un amigo y te digo cómo se puede hacer y cuánto costaría. La consulta es gratis.</p>
+          </div>
+          <a class="btn btn--dark" data-contacto="Hola, tengo una idea que no encaja en tus opciones. Te cuento:">Consultar gratis</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROCESO -->
+    <section class="section section--tint" id="proceso">
+      <div class="wrap">
+        <div class="section__head">
+          <p class="tag">Cómo trabajo</p>
+          <h2>Cuatro pasos, sin sorpresas</h2>
+        </div>
+        <ol class="steps">
+          <li><span>1</span><h3>Me cuentas tu idea</h3><p>Charlamos por WhatsApp o videollamada. No necesitas saber nada técnico: solo qué quieres lograr.</p></li>
+          <li><span>2</span><h3>Te paso una propuesta</h3><p>Recibes por escrito qué voy a hacer, cuánto cuesta y cuándo lo entrego. El precio no cambia a mitad de camino.</p></li>
+          <li><span>3</span><h3>Lo construyo y lo vas viendo</h3><p>Te muestro avances para que opines y pidas ajustes antes de terminar.</p></li>
+          <li><span>4</span><h3>Lo publicamos juntos</h3><p>Queda funcionando, te enseño a usarlo y sigo disponible si surge alguna duda.</p></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- SOBRE MÍ -->
+    <section class="section" id="sobre-mi">
+      <div class="wrap about">
+        <div class="about__photo"><img src="foto.png" alt="Foto de Emmanuel Moreno Halberstadt" loading="lazy"></div>
+        <div>
+          <p class="tag">Sobre mí</p>
+          <h2>Hola, soy Emmanuel 👋</h2>
+          <p>Soy desarrollador full stack de Córdoba, Argentina, y estudio la Tecnicatura Universitaria en Programación en la UTN (Facultad Regional Córdoba).</p>
+          <p>Construyo páginas y sistemas web completos: tanto lo que ves en pantalla como lo que funciona por detrás. Aprendo rápido, soy responsable con los plazos y reviso todo el código que entrego. Y te lo explico siempre en simple.</p>
+          <ul class="chips">
+            <li>📍 Córdoba, Argentina</li>
+            <li>🎓 UTN-FRC</li>
+            <li>🗣️ Español · Inglés · Portugués</li>
+          </ul>
+          <p class="tech">Para los curiosos: trabajo con Java y Spring Boot, C# y .NET, Angular y bases de datos como SQL Server y MongoDB.</p>
+          <div class="about__links">
+            <a class="btn btn--accent" data-portafolio>Ver mi portafolio ↗</a>
+            <a class="btn btn--ghost" data-linkedin>LinkedIn</a>
+            <a class="btn btn--ghost" data-github>GitHub</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="section section--tint" id="preguntas">
+      <div class="wrap faq">
+        <div class="section__head">
+          <p class="tag">Preguntas frecuentes</p>
+          <h2>Dudas comunes, respuestas claras</h2>
+        </div>
+        <div class="faq__list">
+          <details>
+            <summary>No sé nada de tecnología, ¿es un problema?</summary>
+            <p>Para nada. Mi trabajo es justamente ocuparme de eso. Tú me cuentas cómo funciona tu negocio y yo traduzco eso a una página o sistema que funcione.</p>
+          </details>
+          <details>
+            <summary>¿El precio que aparece es el precio final?</summary>
+            <p>Los precios publicados son el abono mensual de mantenimiento más bajo de cada servicio, en pesos argentinos. Después de conversar te paso un precio fijo por escrito según lo que necesites, y ese precio se respeta.</p>
+          </details>
+          <details>
+            <summary>¿Qué son el dominio y el hosting? ¿Tengo que pagarlos aparte?</summary>
+            <p>El dominio es la dirección de tu página (por ejemplo, tunegocio.com) y el hosting es el lugar donde queda guardada para que todos puedan verla. Son servicios anuales de terceros; yo te ayudo a contratarlos y a dejarlos configurados.</p>
+          </details>
+          <details>
+            <summary>¿Voy a poder cambiar textos, fotos o precios yo mismo?</summary>
+            <p>Sí. Si lo necesitas, te dejo una forma sencilla de editar el contenido y te enseño a usarla. Y si prefieres no tocar nada, puedo encargarme yo.</p>
+          </details>
+          <details>
+            <summary>¿Cómo se paga?</summary>
+            <p>Con un abono mensual de mantenimiento. Los detalles quedan acordados en la propuesta antes de empezar.</p>
+          </details>
+          <details>
+            <summary>¿Qué pasa si algo falla después de la entrega?</summary>
+            <p>Sigo disponible. Si aparece un error en lo que entregué, lo corrijo. Y si más adelante quieres agregar cosas nuevas, lo conversamos.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA FINAL -->
+    <section class="cta">
+      <div class="wrap cta__in">
+        <h2>¿Empezamos con tu proyecto?</h2>
+        <p>Escríbeme contándome qué necesitas. Te respondo con una idea clara de cómo hacerlo y cuánto costaría.</p>
+        <div class="hero__cta">
+          <a class="btn btn--accent" data-contacto="Hola, quiero empezar un proyecto contigo. Te cuento qué necesito:">Escribirme ahora</a>
+          <a class="btn btn--light" data-portafolio>Ver mi portafolio ↗</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap footer__in">
+      <span>© <span id="year"></span> <span data-nombre></span></span>
+      <span><a data-linkedin>LinkedIn</a> · <a data-github>GitHub</a> · <a data-email></a></span>
+    </div>
+  </footer>
+
+  <!-- MODAL DEMO -->
+  <dialog id="demo" class="demo" aria-labelledby="demo-title">
+    <div class="demo__bar">
+      <div class="demo__dots" aria-hidden="true"><i></i><i></i><i></i></div>
+      <strong id="demo-title"></strong>
+      <div class="demo__tools">
+        <div class="seg" role="group" aria-label="Tamaño de pantalla">
+          <button type="button" data-view="desktop" class="is-on">Computadora</button>
+          <button type="button" data-view="mobile">Celular</button>
+        </div>
+        <button type="button" class="demo__close" aria-label="Cerrar demo">✕</button>
+      </div>
+    </div>
+    <div class="demo__stage">
+      <iframe id="demo-frame" title="Demo interactiva" loading="lazy"></iframe>
+    </div>
+    <div class="demo__foot">
+      <span>Es un ejemplo: puedes hacer clic y probarlo. El tuyo se diseña a tu medida.</span>
+      <a id="demo-cta" class="btn btn--accent btn--sm">Quiero algo así</a>
+    </div>
+  </dialog>
+
+  <script src="config.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

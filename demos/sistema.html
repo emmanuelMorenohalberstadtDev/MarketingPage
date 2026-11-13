@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sistema de gestión — Demo</title>
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  :root { --blue: #2356f6; --ink: #111a2e; --muted: #68748a; --line: #e4e9f2; --bg: #f3f6fb; }
+  body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; background: var(--bg); color: var(--ink); display: grid; grid-template-columns: 220px 1fr; min-height: 100vh; font-size: 15px; }
+  button, input, select { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  img { display: block; object-fit: cover; }
+
+  /* Menú lateral */
+  aside { background: var(--ink); color: #b9c3d6; padding: 20px 12px; display: flex; flex-direction: column; gap: 4px; position: sticky; top: 0; height: 100vh; }
+  .brand { color: #fff; font-weight: 700; font-size: 1.1rem; padding: 2px 10px 18px; display: flex; align-items: center; gap: 10px; }
+  .brand i { font-style: normal; background: var(--blue); width: 32px; height: 32px; border-radius: 9px; display: grid; place-items: center; }
+  aside button { display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; background: none; border: 0; color: inherit; padding: 11px 12px; border-radius: 10px; }
+  aside button:hover { background: #1c2742; color: #fff; }
+  aside button.on { background: var(--blue); color: #fff; font-weight: 600; }
+  .user { margin-top: auto; display: flex; align-items: center; gap: 10px; padding: 12px 10px 0; border-top: 1px solid #25304b; font-size: .85rem; }
+  .user b { color: #fff; display: block; }
+  .av { width: 34px; height: 34px; border-radius: 50%; background: #33415f; color: #fff; display: grid; place-items: center; font-weight: 700; flex: none; }
+
+  main { padding: 24px 28px 60px; min-width: 0; }
+  .head { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
+  h1 { font-size: 1.45rem; }
+  .head p { color: var(--muted); font-size: .92rem; }
+  h2 { font-size: 1rem; margin-bottom: 14px; }
+  .primary { background: var(--blue); color: #fff; border: 0; border-radius: 10px; padding: 11px 18px; font-weight: 600; }
+  .primary:disabled { opacity: .4; cursor: not-allowed; }
+  .ghost { background: #fff; border: 1px solid #d3dae7; border-radius: 8px; padding: 6px 12px; font-size: .85rem; white-space: nowrap; }
+  .ghost:hover { border-color: var(--blue); color: var(--blue); }
+  .panel { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 20px; }
+  .cols { display: grid; grid-template-columns: 1.4fr 1fr; gap: 16px; margin-top: 16px; }
+
+  /* Indicadores */
+  .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .k { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 18px; }
+  .k small { color: var(--muted); }
+  .k strong { display: block; font-size: 1.75rem; margin-top: 4px; font-variant-numeric: tabular-nums; }
+  .k em { font-style: normal; font-size: .8rem; color: #17804a; }
+  .k.warn strong { color: #d9480f; }
+
+  /* Gráfico */
+  .chart { display: flex; align-items: flex-end; gap: 12px; height: 170px; }
+  .bar { flex: 1; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 6px; font-size: .75rem; color: var(--muted); }
+  .bar i { width: 100%; max-width: 52px; background: #cfdcff; border-radius: 7px 7px 0 0; transition: height .35s; }
+  .bar.today i { background: var(--blue); }
+  .bar.today { color: var(--ink); font-weight: 600; }
+
+  /* Listas */
+  .row { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid #eef1f6; }
+  .row:last-child { border: 0; }
+  .row img { width: 42px; height: 42px; border-radius: 9px; background: #eef1f6; flex: none; }
+  .row .t { flex: 1; min-width: 0; }
+  .row .t small { display: block; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .row b.m { font-variant-numeric: tabular-nums; }
+  .empty { color: var(--muted); text-align: center; padding: 26px 0; }
+
+  /* Punto de venta */
+  .pos { display: grid; grid-template-columns: 1fr 330px; gap: 16px; align-items: start; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+  .prod { background: #fff; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; text-align: left; padding: 0; position: relative; transition: transform .12s, border-color .12s; }
+  .prod:hover:not(:disabled) { border-color: var(--blue); transform: translateY(-2px); }
+  .prod:disabled { opacity: .45; cursor: not-allowed; }
+  .prod img { width: 100%; aspect-ratio: 4/3; background: #eef1f6; }
+  .prod div { padding: 10px 12px 12px; }
+  .prod span { display: block; font-size: .9rem; line-height: 1.25; min-height: 2.5em; }
+  .prod b { font-size: 1.05rem; }
+  .prod small { color: var(--muted); float: right; margin-top: 3px; }
+  .prod .n { position: absolute; top: 8px; right: 8px; background: var(--blue); color: #fff; border-radius: 999px; min-width: 26px; height: 26px; display: grid; place-items: center; font-weight: 700; font-size: .85rem; padding: 0 6px; }
+  .ticket { position: sticky; top: 16px; }
+  .qty { display: flex; align-items: center; gap: 8px; font-variant-numeric: tabular-nums; }
+  .qty button { width: 26px; height: 26px; border-radius: 50%; border: 1px solid #d3dae7; background: #fff; line-height: 1; }
+  label { display: block; font-size: .82rem; color: var(--muted); margin: 12px 0 5px; }
+  select { width: 100%; padding: 9px 10px; border: 1px solid #d3dae7; border-radius: 9px; background: #fff; }
+  .pay { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .pay button { border: 1px solid #d3dae7; background: #fff; border-radius: 9px; padding: 8px 4px; font-size: .82rem; }
+  .pay button.on { background: #e8eeff; border-color: var(--blue); color: var(--blue); font-weight: 600; }
+  .total { display: flex; justify-content: space-between; font-size: 1.3rem; font-weight: 700; margin: 16px 0 12px; }
+  .ticket .primary { width: 100%; padding: 14px; font-size: 1rem; }
+
+  /* Tablas */
+  .tools { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 14px; flex-wrap: wrap; align-items: center; }
+  .tools h2 { margin: 0; }
+  .tools input { padding: 9px 12px; border: 1px solid #d3dae7; border-radius: 10px; width: min(260px, 100%); }
+  .tw { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; min-width: 560px; }
+  th { text-align: left; color: var(--muted); font-weight: 500; font-size: .78rem; text-transform: uppercase; letter-spacing: .04em; }
+  th, td { padding: 10px 8px; border-bottom: 1px solid #eef1f6; }
+  .num { text-align: right; font-variant-numeric: tabular-nums; }
+  td .pn { display: flex; align-items: center; gap: 12px; }
+  td .pn img { width: 40px; height: 40px; border-radius: 8px; background: #eef1f6; }
+  td .pn small { display: block; color: var(--muted); }
+  .pill { font-size: .75rem; font-weight: 600; padding: 3px 10px; border-radius: 999px; background: #e3f6ea; color: #17804a; white-space: nowrap; }
+  .pill.low { background: #ffeadb; color: #c2410c; }
+  .pill.out { background: #fde2e2; color: #b91c1c; }
+
+  /* Reportes */
+  .hb { display: grid; grid-template-columns: 150px 1fr 44px; gap: 10px; align-items: center; padding: 7px 0; font-size: .9rem; }
+  .hb span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .hb i { height: 12px; border-radius: 6px; background: var(--blue); min-width: 4px; transition: width .35s; }
+  .hb b { text-align: right; font-variant-numeric: tabular-nums; }
+
+  .toast { position: fixed; bottom: 22px; left: 50%; transform: translate(-50%, 20px); background: var(--ink); color: #fff; padding: 12px 20px; border-radius: 12px; opacity: 0; transition: .3s; pointer-events: none; z-index: 9; width: max-content; max-width: 92%; }
+  .toast.on { opacity: 1; transform: translate(-50%, 0); }
+
+  @media (max-width: 900px) {
+    .kpis { grid-template-columns: repeat(2, 1fr); }
+    .cols, .pos { grid-template-columns: 1fr; }
+    .ticket { position: static; }
+  }
+  @media (max-width: 720px) {
+    body { grid-template-columns: 1fr; }
+    aside { flex-direction: row; height: auto; position: sticky; z-index: 5; padding: 8px; overflow-x: auto; align-items: center; }
+    .brand { padding: 0 8px 0 4px; } .brand span, .user { display: none; }
+    aside button { width: auto; white-space: nowrap; padding: 9px 12px; }
+    main { padding: 16px 14px 50px; }
+    .hb { grid-template-columns: 110px 1fr 40px; }
+  }
+</style>
+</head>
+<body>
+<aside>
+  <div class="brand"><i>🔧</i><span>Ferretería Central</span></div>
+  <button data-view="resumen">📊 Resumen</button>
+  <button data-view="vender">🛒 Vender</button>
+  <button data-view="productos">📦 Productos</button>
+  <button data-view="clientes">👥 Clientes</button>
+  <button data-view="reportes">📈 Reportes</button>
+  <div class="user"><span class="av">M</span><span><b>Marta</b>Dueña</span></div>
+</aside>
+<main id="main"></main>
+<div class="toast" id="toast"></div>
+
+<script>
+  const $ = (id) => document.getElementById(id);
+  const money = (n) => "$" + n.toLocaleString("es-AR");
+
+  const P = [
+    { id: 1, n: "Martillo de carpintero", cat: "Herramientas", p: 14, s: 23, sold: 31, img: "martillo" },
+    { id: 2, n: "Taladro inalámbrico 18V", cat: "Eléctricas", p: 89, s: 6, sold: 12, img: "taladro" },
+    { id: 3, n: "Juego de puntas y dados", cat: "Herramientas", p: 24, s: 11, sold: 19, img: "destornilladores" },
+    { id: 4, n: "Cinta métrica 5 m", cat: "Medición", p: 6, s: 40, sold: 44, img: "cinta" },
+    { id: 5, n: "Llave ajustable 8\"", cat: "Herramientas", p: 12, s: 3, sold: 22, img: "llave" },
+    { id: 6, n: "Tornillos para madera x100", cat: "Fijaciones", p: 5, s: 4, sold: 58, img: "tornillos" },
+    { id: 7, n: "Pintura blanca 4 L + brocha", cat: "Pinturería", p: 32, s: 9, sold: 16, img: "pintura" },
+    { id: 8, n: "Lijas surtidas (pack x3)", cat: "Pinturería", p: 4, s: 0, sold: 27, img: "lija" },
+  ];
+  const C = [
+    { n: "Consumidor final", tel: "—", buys: 0, total: 0 },
+    { n: "Carlos Giménez", tel: "351 555-0142", buys: 8, total: 412 },
+    { n: "Constructora Los Álamos", tel: "351 555-0187", buys: 21, total: 2890 },
+    { n: "Lucía Ferreyra", tel: "351 555-0119", buys: 3, total: 96 },
+  ];
+  const sales = [
+    { h: "11:40", c: "Carlos Giménez", pay: "Tarjeta", items: [[2, 1], [6, 2]], total: 99 },
+    { h: "10:15", c: "Consumidor final", pay: "Efectivo", items: [[4, 1], [1, 1]], total: 20 },
+    { h: "09:05", c: "Constructora Los Álamos", pay: "Transferencia", items: [[7, 3], [8, 2]], total: 104 },
+  ];
+  const week = [["Lun", 420], ["Mar", 610], ["Mié", 380], ["Jue", 740], ["Vie", 560]];
+
+  const st = { view: "resumen", ticket: {}, client: 0, pay: "Efectivo", q: "" };
+  const prod = (id) => P.find((p) => p.id == id);
+  const img = (p) => `img/${p.img}.jpg`;
+  const income = () => sales.reduce((a, s) => a + s.total, 0);
+  const lowList = () => P.filter((p) => p.s < 5);
+  const status = (p) => (p.s === 0 ? ["out", "Sin stock"] : p.s < 5 ? ["low", "Stock bajo"] : ["", "Disponible"]);
+  const ticketTotal = () => Object.entries(st.ticket).reduce((a, [id, q]) => a + prod(id).p * q, 0);
+
+  const views = {
+    resumen() {
+      const inc = income(), max = Math.max(...week.map((w) => w[1]), inc, 1);
+      const bars = [...week, ["Hoy", inc]];
+      return `
+      <div class="head"><div><h1>Buen día, Marta 👋</h1><p>Así va tu negocio hoy.</p></div>
+        <button class="primary" data-view="vender">+ Nueva venta</button></div>
+      <div class="kpis">
+        <div class="k"><small>Ingresos de hoy</small><strong>${money(inc)}</strong><em>▲ respecto a ayer</em></div>
+        <div class="k"><small>Ventas de hoy</small><strong>${sales.length}</strong></div>
+        <div class="k"><small>Ticket promedio</small><strong>${money(Math.round(inc / sales.length))}</strong></div>
+        <div class="k ${lowList().length ? "warn" : ""}"><small>Productos por reponer</small><strong>${lowList().length}</strong></div>
+      </div>
+      <div class="cols">
+        <div class="panel"><h2>Ingresos de la semana</h2>
+          <div class="chart">${bars.map(([d, v], i) => `<div class="bar ${i === 5 ? "today" : ""}">${money(v)}<i style="height:${Math.max((v / max) * 100, 2)}%"></i>${d}</div>`).join("")}</div>
+        </div>
+        <div class="panel"><h2>⚠️ Hay que reponer</h2>
+          ${lowList().map((p) => `<div class="row"><img src="${img(p)}" alt=""><div class="t">${p.n}<small>Quedan ${p.s}</small></div><button class="ghost" data-restock="${p.id}">+ Reponer</button></div>`).join("") || '<p class="empty">Todo en orden ✅</p>'}
+        </div>
+      </div>
+      <div class="panel" style="margin-top:16px"><h2>Últimas ventas</h2>
+        ${sales.slice(0, 6).map((s) => `<div class="row"><span class="av" style="background:#e8eeff;color:#2356f6">${s.c[0]}</span>
+          <div class="t">${s.c}<small>${s.h} · ${s.pay} · ${s.items.map(([id, q]) => q + "× " + prod(id).n).join(", ")}</small></div><b class="m">${money(s.total)}</b></div>`).join("")}
+      </div>`;
+    },
+
+    vender() {
+      const lines = Object.entries(st.ticket);
+      return `
+      <div class="head"><div><h1>Nueva venta</h1><p>Toca un producto para agregarlo al ticket.</p></div></div>
+      <div class="pos">
+        <div class="grid">${P.map((p) => `
+          <button class="prod" data-add="${p.id}" ${p.s - (st.ticket[p.id] || 0) <= 0 ? "disabled" : ""}>
+            ${st.ticket[p.id] ? `<i class="n">${st.ticket[p.id]}</i>` : ""}
+            <img src="${img(p)}" alt="">
+            <div><span>${p.n}</span><b>${money(p.p)}</b><small>${p.s ? "Stock: " + p.s : "Sin stock"}</small></div>
+          </button>`).join("")}</div>
+        <div class="panel ticket"><h2>Ticket</h2>
+          ${lines.map(([id, q]) => `<div class="row"><div class="t">${prod(id).n}<small>${money(prod(id).p)} c/u</small></div>
+            <span class="qty"><button data-qty="-1" data-id="${id}">−</button>${q}<button data-qty="1" data-id="${id}">+</button></span></div>`).join("") || '<p class="empty">Aún no agregaste productos</p>'}
+          <label>Cliente</label>
+          <select id="client">${C.map((c, i) => `<option value="${i}" ${i == st.client ? "selected" : ""}>${c.n}</option>`).join("")}</select>
+          <label>Forma de pago</label>
+          <div class="pay">${["Efectivo", "Tarjeta", "Transferencia"].map((m) => `<button data-pay="${m}" class="${st.pay === m ? "on" : ""}">${m}</button>`).join("")}</div>
+          <div class="total"><span>Total</span><span>${money(ticketTotal())}</span></div>
+          <button class="primary" data-charge ${lines.length ? "" : "disabled"}>Cobrar ${lines.length ? money(ticketTotal()) : ""}</button>
+        </div>
+      </div>`;
+    },
+
+    productos() {
+      return `
+      <div class="head"><div><h1>Productos</h1><p>${P.length} productos · ${P.reduce((a, p) => a + p.s, 0)} unidades en stock</p></div></div>
+      <div class="panel">
+        <div class="tools"><h2>Inventario</h2><input id="q" placeholder="🔍 Buscar producto o categoría..." value="${st.q}"></div>
+        <div class="tw"><table><thead><tr><th>Producto</th><th class="num">Precio</th><th class="num">Stock</th><th>Estado</th><th></th></tr></thead>
+        <tbody id="rows">${productRows()}</tbody></table></div>
+      </div>`;
+    },
+
+    clientes() {
+      return `
+      <div class="head"><div><h1>Clientes</h1><p>Historial de compras de cada cliente.</p></div></div>
+      <div class="panel"><div class="tw"><table>
+        <thead><tr><th>Cliente</th><th>Teléfono</th><th class="num">Compras</th><th class="num">Total gastado</th></tr></thead>
+        <tbody>${C.slice(1).sort((a, b) => b.total - a.total).map((c) => `<tr>
+          <td><div class="pn"><span class="av" style="background:#e8eeff;color:#2356f6">${c.n[0]}</span>${c.n}</div></td>
+          <td>${c.tel}</td><td class="num">${c.buys}</td><td class="num"><b>${money(c.total)}</b></td></tr>`).join("")}</tbody>
+      </table></div></div>`;
+    },
+
+    reportes() {
+      const top = [...P].sort((a, b) => b.sold - a.sold).slice(0, 6), maxS = top[0].sold;
+      const pays = ["Efectivo", "Tarjeta", "Transferencia"].map((m) => [m, sales.filter((s) => s.pay === m).reduce((a, s) => a + s.total, 0)]);
+      const maxP = Math.max(...pays.map((p) => p[1]), 1);
+      return `
+      <div class="head"><div><h1>Reportes</h1><p>Lo que necesitas saber para decidir, sin planillas.</p></div></div>
+      <div class="cols" style="margin-top:0">
+        <div class="panel"><h2>Productos más vendidos del mes</h2>
+          ${top.map((p) => `<div class="hb"><span>${p.n}</span><i style="width:${(p.sold / maxS) * 100}%"></i><b>${p.sold}</b></div>`).join("")}</div>
+        <div class="panel"><h2>Cobros de hoy por forma de pago</h2>
+          ${pays.map(([m, v]) => `<div class="hb"><span>${m}</span><i style="width:${(v / maxP) * 100}%"></i><b>${money(v)}</b></div>`).join("")}
+          <div class="total" style="font-size:1.05rem;border-top:1px solid #eef1f6;padding-top:14px"><span>Total del día</span><span>${money(income())}</span></div></div>
+      </div>`;
+    },
+  };
+
+  function productRows() {
+    const q = st.q.toLowerCase();
+    return P.filter((p) => (p.n + p.cat).toLowerCase().includes(q)).map((p) => {
+      const s = status(p);
+      return `<tr><td><div class="pn"><img src="${img(p)}" alt=""><div>${p.n}<small>${p.cat}</small></div></div></td>
+        <td class="num">${money(p.p)}</td><td class="num">${p.s}</td><td><span class="pill ${s[0]}">${s[1]}</span></td>
+        <td class="num"><button class="ghost" data-restock="${p.id}">+ Reponer 10</button></td></tr>`;
+    }).join("") || '<tr><td colspan="5" class="empty">Sin resultados</td></tr>';
+  }
+
+  function render() {
+    $("main").innerHTML = views[st.view]();
+    document.querySelectorAll("aside [data-view]").forEach((b) => b.classList.toggle("on", b.dataset.view === st.view));
+  }
+  function toast(msg) {
+    const t = $("toast"); t.textContent = msg; t.classList.add("on");
+    clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove("on"), 2600);
+  }
+
+  document.addEventListener("click", (e) => {
+    const b = e.target.closest("button"); if (!b) return;
+    const d = b.dataset;
+    if (d.view) { st.view = d.view; window.scrollTo(0, 0); }
+    else if (d.add) st.ticket[d.add] = (st.ticket[d.add] || 0) + 1;
+    else if (d.qty) {
+      const q = (st.ticket[d.id] || 0) + +d.qty;
+      if (q <= 0) delete st.ticket[d.id]; else if (q <= prod(d.id).s) st.ticket[d.id] = q;
+    }
+    else if (d.pay) st.pay = d.pay;
+    else if (d.restock) { const p = prod(d.restock); p.s += 10; toast(`Se repusieron 10 unidades de ${p.n}`); }
+    else if ("charge" in d) {
+      const items = Object.entries(st.ticket).map(([id, q]) => [+id, q]), total = ticketTotal(), c = C[st.client];
+      items.forEach(([id, q]) => { const p = prod(id); p.s -= q; p.sold += q; });
+      c.buys++; c.total += total;
+      const now = new Date();
+      sales.unshift({ h: now.toTimeString().slice(0, 5), c: c.n, pay: st.pay, items, total });
+      st.ticket = {}; st.client = 0; st.view = "resumen";
+      toast(`✅ Venta de ${money(total)} registrada. Stock y reportes actualizados.`);
+    } else return;
+    render();
+  });
+  document.addEventListener("change", (e) => { if (e.target.id === "client") st.client = +e.target.value; });
+  document.addEventListener("input", (e) => {
+    if (e.target.id === "q") { st.q = e.target.value; $("rows").innerHTML = productRows(); }
+  });
+
+  render();
+</script>
+</body>
+</html>

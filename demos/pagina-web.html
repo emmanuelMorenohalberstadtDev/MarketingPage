@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Café Aurora — Demo</title>
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: Georgia, "Times New Roman", serif; color: #2b1d14; background: #fbf5ea; line-height: 1.6; }
+  .w { width: min(960px, 100% - 40px); margin-inline: auto; }
+  header { display: flex; justify-content: space-between; align-items: center; padding: 18px 0; }
+  header b { font-size: 1.3rem; letter-spacing: .04em; }
+  nav a { margin-left: 20px; color: inherit; text-decoration: none; font-family: system-ui, sans-serif; font-size: .9rem; }
+  .hero { background: linear-gradient(100deg, rgba(34,19,10,.92) 20%, rgba(34,19,10,.55)), url(img/cafe.jpg) center/cover; color: #fbf5ea; border-radius: 24px; padding: clamp(40px, 8vw, 90px) clamp(24px, 6vw, 70px); }
+  .hero h1 { font-size: clamp(2.2rem, 7vw, 4rem); line-height: 1.05; font-weight: 400; }
+  .hero p { margin: 18px 0 28px; max-width: 30em; opacity: .85; font-size: 1.1rem; }
+  .btn { display: inline-block; background: #e9b44c; color: #2b1d14; padding: 13px 26px; border-radius: 999px; text-decoration: none; font: 700 .95rem system-ui, sans-serif; border: 0; cursor: pointer; }
+  section { padding: 56px 0 0; }
+  h2 { font-size: 2rem; font-weight: 400; margin-bottom: 22px; }
+  .menu { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 16px; }
+  .item { background: #fff; border-radius: 16px; overflow: hidden; border: 1px solid #eadfcb; }
+  .item img { width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block; }
+  .item div { padding: 16px 18px 18px; }
+  .item h3 { font-size: 1.15rem; margin-bottom: 2px; }
+  .item p { font: .9rem system-ui, sans-serif; color: #7a6a5a; }
+  .item b { display: block; margin-top: 10px; font-family: system-ui, sans-serif; color: #7a4a2a; }
+  .info { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; font-family: system-ui, sans-serif; }
+  .box { background: #fff; border: 1px solid #eadfcb; border-radius: 16px; padding: 24px; }
+  .box table { width: 100%; border-collapse: collapse; }
+  .box td { padding: 6px 0; border-bottom: 1px dashed #eadfcb; }
+  .box td:last-child { text-align: right; font-weight: 600; }
+  .map { min-height: 200px; border-radius: 16px; display: grid; place-items: center; text-align: center; color: #5b6b52;
+    background: repeating-linear-gradient(45deg, #dfe8d6 0 22px, #d3dfc8 22px 24px), #dfe8d6; }
+  footer { text-align: center; padding: 50px 0 90px; font: .85rem system-ui, sans-serif; color: #7a6a5a; }
+  .wa { position: fixed; right: 18px; bottom: 18px; background: #25a55a; color: #fff; border: 0; border-radius: 999px; padding: 14px 20px; font: 700 .95rem system-ui, sans-serif; box-shadow: 0 10px 24px -8px rgba(0,0,0,.4); cursor: pointer; }
+  .toast { position: fixed; left: 50%; bottom: 80px; transform: translateX(-50%); background: #2b1d14; color: #fff; padding: 12px 18px; border-radius: 12px; font: .9rem system-ui, sans-serif; opacity: 0; transition: opacity .3s; pointer-events: none; width: max-content; max-width: 90%; }
+  .toast.on { opacity: 1; }
+  @media (max-width: 600px) { .info { grid-template-columns: 1fr; } nav { display: none; } }
+</style>
+</head>
+<body>
+<div class="w">
+  <header>
+    <b>☕ CAFÉ AURORA</b>
+    <nav><a href="#carta">Carta</a><a href="#visitanos">Visítanos</a></nav>
+  </header>
+
+  <div class="hero">
+    <h1>Café de especialidad,<br>hecho con calma.</h1>
+    <p>Tostamos nuestro propio grano y horneamos cada mañana. Ven a desayunar o pide para llevar.</p>
+    <a class="btn" href="#carta">Ver la carta</a>
+  </div>
+
+  <section id="carta">
+    <h2>Nuestra carta</h2>
+    <div class="menu">
+      <div class="item"><img src="img/flatwhite.jpg" alt="Flat white"><div><h3>Flat white</h3><p>Doble espresso y leche cremosa</p><b>$ 3.50</b></div></div>
+      <div class="item"><img src="img/croissant.jpg" alt="Croissants"><div><h3>Croissant de mantequilla</h3><p>Horneado cada mañana</p><b>$ 2.80</b></div></div>
+      <div class="item"><img src="img/tostada.jpg" alt="Tostada de palta"><div><h3>Tostada de palta</h3><p>Pan de masa madre y semillas</p><b>$ 6.90</b></div></div>
+      <div class="item"><img src="img/tarta.jpg" alt="Tarta de queso"><div><h3>Tarta de queso</h3><p>Receta de la casa</p><b>$ 4.20</b></div></div>
+    </div>
+  </section>
+
+  <section id="visitanos">
+    <h2>Visítanos</h2>
+    <div class="info">
+      <div class="box">
+        <table>
+          <tr><td>Lunes a viernes</td><td>7:30 – 19:00</td></tr>
+          <tr><td>Sábados</td><td>8:30 – 20:00</td></tr>
+          <tr><td>Domingos</td><td>9:00 – 14:00</td></tr>
+        </table>
+        <p style="margin-top:16px">📍 Calle del Sol 123, Centro</p>
+      </div>
+      <div class="map"><div>🗺️<br>Aquí va el mapa<br>de tu local</div></div>
+    </div>
+  </section>
+
+  <footer>Café Aurora · Página de ejemplo</footer>
+</div>
+
+<button class="wa" id="wa">💬 Pedir por WhatsApp</button>
+<div class="toast" id="toast">En tu página real, este botón abre un chat de WhatsApp contigo.</div>
+<script>
+  const t = document.getElementById("toast");
+  document.getElementById("wa").onclick = () => { t.classList.add("on"); setTimeout(() => t.classList.remove("on"), 3200); };
+</script>
+</body>
+</html>
